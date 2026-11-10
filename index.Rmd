@@ -6,7 +6,8 @@ output:
   html_document: default
   word_document: default
 ---
-```{r setup, include=FALSE}
+## Appel de librairies, choix du répertoire de travail et codificatio des variables
+```{r, echo =TRUE}
 library(tidyverse)
 library(gtsummary)
 setwd("F:/alokeme/M2 Stats/Devoirs/Stats de base")
@@ -16,7 +17,7 @@ mabase_reti$vitamine <- as.factor(mabase_reti$vitamine)
 mabase_reti$sexe <- as.factor(mabase_reti$sexe)
 ```
 ## 1: Résumé statistique de la base de données
-```{r,echo=FALSE}
+```{r, echo =TRUE}
 tbl_summary(mabase_reti,
             include = c("age", "sexe", "tabac", "bmi", "vitamine","cholesterol", "alcool", "retdiet", "retplasma"),
             type = list(all_continuous()~"continuous2"),
@@ -26,7 +27,7 @@ tbl_summary(mabase_reti,
             ))
 ```
 ## 2: Etudier les relations entre toutes les paires de variable possibles
-#Tous les histogrammes de normalité en une seule figure
+## Tous les histogrammes de normalité en une seule figure
 ```{r}
 par(mfrow = c(3, 3))
 hist_1 <- hist(mabase_reti$age, xlab = "Age (en années)", ylab = "Fréquence", main = "Distribution de l'âge")
@@ -37,154 +38,154 @@ hist_5 <- hist(mabase_reti$retdiet, xlab = "Rétinol consommé (mcg/jour)", ylab
 hist_6 <- hist(mabase_reti$retplasma, xlab = "Rétinol plasmatique (ng/ml)", ylab = "Fréquence", main = "Distribution du rétinol plasmatique")
 ```
 
-# a : Entre la concentration en rétinol et l'age
-# Graphique
-```{r,echo=FALSE}
+## a : Entre la concentration en rétinol et l'age
+## Graphique
+```{r,echo=TRUE}
 ggplot(mabase_reti,aes(x=mabase_reti$retplasma, y= age)) + geom_point(col="blue")
 ```
-# Verification de la normalité de la concentration en rétinol
+## Verification de la normalité de la concentration en rétinol
 ```{r,echo=TRUE}
 hist(mabase_reti$retplasma)
 ```
-# Test de corrélation 
-```{r,echo=FALSE}
+## Test de corrélation 
+```{r,echo=TRUE}
 cor.test(x=mabase_reti$retplasma, y= mabase_reti$age)
 ```
-# b : Entre le tabagisme et l'age
-```{r,echo=FALSE}
+## b : Entre le tabagisme et l'age
+```{r,echo=TRUE}
 P2 <- ggplot(mabase_reti,aes(x=tabac,y=age)) + geom_boxplot(aes(fill = tabac)) + geom_point()+ labs(x="Consommation de tabac", y= "Age (en années)")+ scale_x_discrete(labels =c("Jamais","Autrefois", "Actuellement")) +  scale_fill_brewer(palette="Dark2",labels =c("Jamais","Autrefois", "Actuellement"), name = "Statut fumeur")
 ggsave("figure_age_tabac.png",P2, dpi = 500)
 ```
-# Vérification de la normailité de la distribution de l'age
+## Vérification de la normailité de la distribution de l'age
 ```{r,echo=TRUE}
 hist(mabase_reti$age)
 ```
-#Vérification de l'égalité des variances d'age entre les groupes de tabac
+## Vérification de l'égalité des variances d'age entre les groupes de tabac
 ```{r,echo=TRUE}
 by(mabase_reti$age,mabase_reti$tabac,sd)
 ```
-# Test anova
-```{r,echo=FALSE}
+## Test anova
+```{r,echo=TRUE}
 model1 <- lm(age~tabac, data = mabase_reti)
 anova(model1)
 ```
-# Calcul des moyennes d'age
-```{r,echo=FALSE}
+## Calcul des moyennes d'age
+```{r,echo=TRUE}
 by(mabase_reti$age,mabase_reti$tabac,mean)
 ```
-# c : Entre le sexe et l'age 
-# Graphique
-```{r,echo=FALSE}
+## c : Entre le sexe et l'age 
+## Graphique
+```{r,echo=TRUE}
 P1 <- ggplot(mabase_reti,aes(x=sexe,y=age)) + geom_boxplot(aes(fill = sexe))  + labs(x="Sexe", y= "Age (années)")+ scale_x_discrete(labels=c("Maculin","Féminin")) + scale_fill_brewer(palette="Dark2",labels = c("Masculin","Féminin"))
 ggsave("figure_age_sexe.png",P1, dpi = 500)
 ```
-# Vérification de la normailité de la distribution de l'age
+## Vérification de la normailité de la distribution de l'age
 ```{r,echo=TRUE}
 hist(mabase_reti$age)
 ```
-#Vérification des variances d'age entre les sexes
+## Vérification des variances d'age entre les sexes
 ```{r,echo=TRUE}
 by(mabase_reti$age,mabase_reti$sexe,sd)
 ```
-# Test t de student
-```{r,echo=FALSE}
+## Test t de student
+```{r,echo=TRUE}
 t.test(mabase_reti$age~mabase_reti$sexe,var.equal = TRUE)
 ```
-# d : Entre l'age et le BMI
-# Graphique
-```{r,echo=FALSE}
+## d : Entre l'age et le BMI
+## Graphique
+```{r, echo =TRUE}
 P3 <- ggplot(mabase_reti,aes(x=mabase_reti$bmi, y= age, colour = sexe)) + geom_point() + labs (x="Indice de masse corporelle", y="Age (années)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ggsave("plot_age_imc.png",P3,dpi = 500)
 
 ```
-# Test de corrélation
-```{r,echo=FALSE}
+## Test de corrélation
+```{r, echo =TRUE}
 cor.test(x=mabase_reti$retplasma, y= mabase_reti$age)
 ```
-# e : Entre l'age et la consommation alimentaire de vitamines
-# Graphique 
-```{r,echo=FALSE}
+## e : Entre l'age et la consommation alimentaire de vitamines
+## Graphique 
+```{r, echo =TRUE}
 P4 <- ggplot(mabase_reti,aes(x=vitamine,y=age)) + geom_boxplot(aes(fill=vitamine)) + labs(x="Consommation de vitamines", y= "age (années)")+ scale_x_discrete(labels =c("Oui,souvent","Oui,pas souvent", "Non")) + scale_fill_brewer(palette="Dark2",labels =c("Oui,souvent","Oui,pas souvent", "Non"), name = "Consommation de vitamines")
 ggsave("figure_age_vitamines.png",P4, dpi = 500)
 ```
-#Vérification de l'homoscédasticité des variances d'age entre les groupes de vitamines
+## Vérification de l'homoscédasticité des variances d'age entre les groupes de vitamines
 ```{r,echo=TRUE}
 by(mabase_reti$age,mabase_reti$tabac,sd)
 ```
-#Test anova
-```{r,echo=FALSE}
+## Test anova
+```{r, echo =TRUE}
 model1 <- lm(age~tabac, data = mabase_reti)
 anova(model1)
 ```
-# Calcul des moyennes d'age par groupe
-```{r,echo=FALSE}
+## Calcul des moyennes d'age par groupe
+```{r, echo =TRUE}
 by(mabase_reti$age,mabase_reti$vitamine,mean)
 ```
-# f : Entre l'age et le taux de cholestérol journalier
-# Graphique
-```{r,echo=FALSE}
+## f : Entre l'age et le taux de cholestérol journalier
+## Graphique
+```{r, echo =TRUE}
 P5 <- ggplot(mabase_reti,aes(x=mabase_reti$cholesterol, y= age, colour = sexe)) + geom_point() + labs (x="Cholestérol par jour(mg/jour)", y="Age(années)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ggsave("plot_age_chtrl.png",P5,dpi = 500)
 ```
-# Test de corrélation
-```{r,echo=FALSE}
+## Test de corrélation
+```{r, echo =TRUE}
 cor.test(x=mabase_reti$cholesterol, y= mabase_reti$age)
 ```
-# g : Entre l'age et le nombre de verres d'alcool consommé par jour
-# Graphique
-```{r,echo=FALSE}
+## g : Entre l'age et le nombre de verres d'alcool consommé par jour
+## Graphique
+```{r, echo =TRUE}
 P6 <- ggplot(mabase_reti,aes(x=mabase_reti$alcool, y= age, colour = sexe)) + geom_point() + labs (x="Alcool (verres/jour)", y="Age(années)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ggsave("plot_age_alcool.png",P6,dpi = 500)
 
 ```
-# Test de corrélation
+## Test de corrélation
 ```{r,echo=TRUE}
 cor.test(x=mabase_reti$alcool, y= mabase_reti$age)
 ```
-# h : Entre l'age et la quantité de rétinol consommée par jour 
-# Graphique
-```{r,echo=FALSE}
+## h : Entre l'age et la quantité de rétinol consommée par jour 
+## Graphique
+```{r, echo =TRUE}
 P7 <- ggplot(mabase_reti,aes(x=mabase_reti$retdiet, y= age, colour = sexe)) + geom_point() + labs (x="Rétinol (mcg/jour)", y="Age(années)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ggsave("plot_age_retdiet.png",P7,dpi = 500)   
 
 ```
-# Test de corrélation
+## Test de corrélation
 ```{r,echo=TRUE}
 cor.test(x=mabase_reti$retdiet, y= mabase_reti$age)
 ```
-# i : Entre l'age et la quantité de rétinol plasmatique
-# Graphique
-```{r,echo=FALSE}
+## i : Entre l'age et la quantité de rétinol plasmatique
+## Graphique
+```{r, echo =TRUE}
 P8 <- ggplot(mabase_reti,aes(x=mabase_reti$retplasma, y= age, colour = sexe)) + geom_point() + labs (x="Rétinol plasmatique(ng/ml)", y="Age(années)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ggsave("plot_age_retplas.png",P8,dpi = 500)  
 ```
-#Test de corrélation
+## Test de corrélation
 ```{r,echo=TRUE}
 cor.test(x=mabase_reti$retplasma, y= mabase_reti$age)
 ```
-# j- Relation entre le sexe et le statut fumeur
-```{r,echo=FALSE}
+## j- Relation entre le sexe et le statut fumeur
+```{r, echo =TRUE}
 tab1 <- table(mabase_reti$sexe,mabase_reti$tabac)
 tab1khi <- chisq.test(tab1)
 tab1khi$expected
 print(tab1khi)
 
 ```
-# k- Relation entre le sexe et l'IMC
-#Graphique
-```{r}
+## k- Relation entre le sexe et l'IMC
+## Graphique
+```{r, echo =TRUE}
 P9 <- ggplot(mabase_reti,aes(x=sexe,y=bmi)) + geom_boxplot(aes(fill = sexe))  + labs(x="Sexe", y= "Indice de masse corporelle")+ scale_x_discrete(labels=c("Maculin","Féminin")) + scale_fill_brewer(palette="Dark2",labels = c("Masculin","Féminin"))
 ggsave("figure_bmi_sexe.png",P9, dpi = 500)
 ```
-#Verification de l'égalité des variances
-```{r}
+## Verification de l'égalité des variances
+```{r, echo =TRUE}
 by(mabase_reti$bmi,mabase_reti$sexe,sd)
 ```
-#test t de student
-```{r}
+## test t de student
+```{r, echo =TRUE}
 t.test(mabase_reti$bmi~mabase_reti$sexe,var.equal = TRUE)
 ```
-#l-Sexe vs vitamines
+## l-Sexe vs vitamines
 ```{r}
 tab2 <- table(mabase_reti$sexe,mabase_reti$vitamine)
 tab2khi <- chisq.test(tab2)
@@ -192,8 +193,8 @@ tab2khi$expected
 print(tab2khi)
 
 ```
-# m:Sexe et cholestérol
-```{r,echo=FALSE}
+## m:Sexe et cholestérol
+```{r, echo =TRUE}
 P10 <- ggplot(mabase_reti,aes(x=sexe,y=mabase_reti$cholesterol)) + geom_boxplot(aes(fill = sexe))  + labs(x="Sexe", y= "Cholesterol (mg/jour)")+ scale_x_discrete(labels=c("Maculin","Féminin")) + scale_fill_brewer(palette="Dark2",labels = c("Masculin","Féminin"))
 ggsave("figure_chtrl_sexe.png",P10, dpi = 500)
 ```
@@ -201,58 +202,58 @@ ggsave("figure_chtrl_sexe.png",P10, dpi = 500)
 ```{r}
 by(mabase_reti$cholesterol,mabase_reti$sexe,sd)
 ```
-# Test de de welch
+## Test de de welch
 ```{r}
 t.test(mabase_reti$cholesterol~mabase_reti$sexe,var.equal = FALSE)
 ```
-#n: Sexe vs alcool
-```{r,echo=FALSE}
+## n: Sexe vs alcool
+```{r, echo =TRUE}
 P11 <- ggplot(mabase_reti,aes(x=sexe,y=mabase_reti$alcool)) + geom_boxplot(aes(fill = sexe))  + labs(x="Sexe", y= "Alcool (verres/jour)")+ scale_x_discrete(labels=c("Maculin","Féminin")) + scale_fill_brewer(palette="Dark2",labels = c("Masculin","Féminin"))
 ggsave("figure_alcool_sexe.png",P11, dpi = 500)
 ```
-# test de Wilcoxon
+## test de Wilcoxon
 ```{r}
 wilcox.test(mabase_reti$alcool ~ mabase_reti$sexe)
 ```
-#o: sexe et retdiet
-```{r,echo=FALSE}
+## o: sexe et retdiet
+```{r,echo=TRUE}
 P12 <- ggplot(mabase_reti,aes(x=sexe,y=mabase_reti$retdiet)) + geom_boxplot(aes(fill = sexe))  + labs(x="Sexe", y= "Rétinol consommé (mcg/jour)")+ scale_x_discrete(labels=c("Maculin","Féminin")) + scale_fill_brewer(palette="Dark2",labels = c("Masculin","Féminin"))
 ggsave("figure_retdiet_sexe.png",P12, dpi = 500)
 ```
-#test de Wilconxon
+## test de Wilconxon
 ```{r}
 wilcox.test(mabase_reti$retdiet ~ mabase_reti$sexe)
 
 ```
-#p:Sexe et retplasma
+## p:Sexe et retplasma
 ```{r}
 P13 <- ggplot(mabase_reti,aes(x=sexe,y=mabase_reti$retplasma)) + geom_boxplot(aes(fill = sexe))  + labs(x="Sexe", y= "Rétinol plasmatique (ng/ml)")+ scale_x_discrete(labels=c("Maculin","Féminin")) + scale_fill_brewer(palette="Dark2",labels = c("Masculin","Féminin"))
 ggsave("figure_retplasma_sexe.png",P13, dpi = 500)
 ```
-# Egalité des variances
+## Egalité des variances
 ```{r}
 by(mabase_reti$retplasma,mabase_reti$sexe,sd)
 ```
-# ttest de welch
+## ttest de welch
 ```{r}
 t.test(mabase_reti$retplasma~mabase_reti$sexe,var.equal=FALSE)
 ```
-#q: Statut fumeur et IMC
-#Graphique
-```{r,echo=FALSE}
+## q: Statut fumeur et IMC
+## Graphique
+```{r,echo=TRUE}
 P14 <- ggplot(mabase_reti,aes(x=tabac,y=bmi)) + geom_boxplot(aes(fill = tabac))  + labs(x="Statut fumeur", y= "Indice de masse corporelle")+ scale_x_discrete(labels=c("Jamais","Autrefois","Actuellement")) + scale_fill_brewer(palette="Dark2",labels = c("Jamais","Autrefois","Actuellement"),name = "Statut fumeur")
 ggsave("figure_tabac_bmi.png",P14, dpi = 500)
 ```
-#Vérification de l'homoscédasticité des variances
+## Vérification de l'homoscédasticité des variances
 ```{r}
 by(mabase_reti$bmi,mabase_reti$tabac,sd)
 ```
-# Test anova
+## Test anova
 ```{r}
 model2 <- lm(bmi~tabac, data = mabase_reti)
 anova(model2)
 ```
-# r : Relation tabac vs vitamines
+## r : Relation tabac vs vitamines
 ```{r}
 tab3 <- table(mabase_reti$tabac,mabase_reti$vitamine)
 tab3khi <- chisq.test(tab3)
@@ -260,61 +261,61 @@ tab3khi$expected
 print(tab3khi)
 
 ```
-# s : Relation tabac vs cholestérol; tabac vs alcool
+## s : Relation tabac vs cholestérol; tabac vs alcool
 ```{r}
 par(mfrow = c(1, 1))
 ggplot(mabase_reti,aes(x=tabac,y=cholesterol)) + geom_boxplot(aes(fill = tabac))  + labs(x="Statut fumeur", y= "Taux de cholestérol (mg/jour)")+ scale_x_discrete(labels=c("Jamais","Autrefois","Actuellement")) + scale_fill_brewer(palette="Dark2",labels = c("Jamais","Autrefois","Actuellement"),name = "Statut fumeur")
 ggplot(mabase_reti,aes(x=tabac,y=alcool)) + geom_boxplot(aes(fill = tabac))  + labs(x="Statut fumeur", y= "Consommation d'alcool (verres/jour)")+ scale_x_discrete(labels=c("Jamais","Autrefois","Actuellement")) + scale_fill_brewer(palette="Dark2",labels = c("Jamais","Autrefois","Actuellement"),name = "Statut fumeur")
 
 ```
-#Vérification de l'homoscédasticité de la variance du cholestrérol au sein des groupes tabac
+## Vérification de l'homoscédasticité de la variance du cholestrérol au sein des groupes tabac
 ```{r}
 by(mabase_reti$cholesterol,mabase_reti$tabac,sd)
 ```
-#test anova avec correction de welch
+## test anova avec correction de welch
 ```{r}
 model3 <- oneway.test(cholesterol~tabac, data = mabase_reti,var.equal=FALSE)
 print(model3)
 ```
-# test de Kruskal entre tabac et alcool
+## test de Kruskal entre tabac et alcool
 ```{r}
 kruskal.test(alcool~tabac, mabase_reti)
 ```
-#Tabac vs retdiet, retplasma
+## Tabac vs retdiet, retplasma
 ```{r}
 par(mfrow = c(1, 1))
 ggplot(mabase_reti,aes(x=tabac,y=retdiet)) + geom_boxplot(aes(fill = tabac))  + labs(x="Statut fumeur", y= "Taux de rétinol consommé (mcg/jour)")+ scale_x_discrete(labels=c("Jamais","Autrefois","Actuellement")) + scale_fill_brewer(palette="Dark2",labels = c("Jamais","Autrefois","Actuellement"),name = "Statut fumeur")
 ggplot(mabase_reti,aes(x=tabac,y=retplasma)) + geom_boxplot(aes(fill = tabac))  + labs(x="Statut fumeur", y= "Quantité de rétinol plasmatique (ng/ml)")+ scale_x_discrete(labels=c("Jamais","Autrefois","Actuellement")) + scale_fill_brewer(palette="Dark2",labels = c("Jamais","Autrefois","Actuellement"),name = "Statut fumeur")
 ```
-#Test de kruskal pour tabac vs consommation en rétinol
+## Test de kruskal pour tabac vs consommation en rétinol
 ```{r}
 kruskal.test(retdiet~tabac, mabase_reti)
 ```
-# Vérification de l'égalité des variances de retplasma dans les groupes tabac
+## Vérification de l'égalité des variances de retplasma dans les groupes tabac
 ```{r}
 by(mabase_reti$retplasma,mabase_reti$tabac,sd)
 ```
-# Anova avec correction de Welch, tabac vs retplasma
+## Anova avec correction de Welch, tabac vs retplasma
 ```{r}
 model4 <- oneway.test(retplasma~tabac, data = mabase_reti,var.equal=FALSE)
 print(model4)
 ```
-# t: IMC vs vitamines
-#Graphique
-```{r,echo=FALSE}
+## t: IMC vs vitamines
+## Graphique
+```{r,echo=TRUE}
 P15 <- ggplot(mabase_reti,aes(x=vitamine,y=mabase_reti$bmi)) + geom_boxplot(aes(fill = vitamine))  + labs(x="Consommation en vitamines", y= "IMC")+ scale_x_discrete(labels=c("Oui, souvent","Oui, pas souvent", "Non")) + scale_fill_brewer(palette="Dark2",labels = c("Oui, souvent","Oui, pas souvent", "Non"), name = "Consommation de vitamines")
 ggsave("figure_imc_vit.png",P15, dpi = 500)
 ```
-# Vérification de l'égalite des variances
+## Vérification de l'égalite des variances
 ```{r}
 by(mabase_reti$bmi,mabase_reti$vitamine,sd)
 ```
-#Test anova
+## Test anova
 ```{r}
 model5 <- lm(bmi~vitamine, data = mabase_reti)
 anova(model5)
 ```
-# U: IMC vs cholestérol, alcool, retdiet, retplasma
+## U: IMC vs cholestérol, alcool, retdiet, retplasma
 ```{r}
 par(mfrow = c(2, 2))
 ggplot(mabase_reti,aes(x=mabase_reti$bmi, y= cholesterol, colour = sexe)) + geom_point() + labs (x="IMC", y="Consommation de cholestérol (mg/jour)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
@@ -322,79 +323,79 @@ ggplot(mabase_reti,aes(x=mabase_reti$bmi, y= alcool, colour = sexe)) + geom_poin
 ggplot(mabase_reti,aes(x=mabase_reti$bmi, y= retdiet, colour = sexe)) + geom_point() + labs (x="IMC", y="Consommation de rétinol (mcg/jour)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ggplot(mabase_reti,aes(x=mabase_reti$bmi, y= retplasma, colour = sexe)) + geom_point() + labs (x="IMC", y="Concentration en rétinol plasmatique (ng/ml)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ```
-# tests de corrélation de Pearson
+## tests de corrélation de Pearson
 ```{r}
 cor.test(x=mabase_reti$bmi, y= mabase_reti$cholesterol)
 cor.test(x=mabase_reti$bmi, y= mabase_reti$alcool)
 cor.test(x=mabase_reti$bmi, y= mabase_reti$retdiet)
 cor.test(x=mabase_reti$bmi, y= mabase_reti$retplasma)
 ```
-# u: Relation entre la consommation de vitamines et les quantités de cholestérol et de retplasma
+## u: Relation entre la consommation de vitamines et les quantités de cholestérol et de retplasma
 #Graphique 
 ```{r}
 par(mfrow = c(1, 1))
 ggplot(mabase_reti,aes(x=vitamine,y=cholesterol)) + geom_boxplot(aes(fill = vitamine))  + labs(x="Consommation de vitamines", y= "Taux de cholestérol (mg/jour)")+ scale_x_discrete(labels=c("Oui, souvent","Oui, pas souvent","Non")) + scale_fill_brewer(palette="Dark2",labels = c("Oui, souvent","Oui, pas souvent","Non"),name = "Consommation de vitamines")
 ggplot(mabase_reti,aes(x=vitamine,y=retplasma)) + geom_boxplot(aes(fill = vitamine))  + labs(x="Consommation de vitamines", y= "Taux de rétinol plasmatique (ng/ml)")+ scale_x_discrete(labels=c("Oui, souvent","Oui, pas souvent","Non")) + scale_fill_brewer(palette="Dark2",labels = c("Oui, souvent","Oui, pas souvent","Non"),name = "Consommation de vitamines")
 ```
-#Egalité des variances
+## Egalité des variances
 ```{r}
 by(mabase_reti$cholesterol,mabase_reti$vitamine,sd)
 by(mabase_reti$retplasma,mabase_reti$vitamine,sd)
 ```
-#ANOVA avec correction de Welch
+## ANOVA avec correction de Welch
 ```{r}
 model6 <- oneway.test(cholesterol~vitamine, data = mabase_reti,var.equal=FALSE)
 print(model6)
 model7 <- oneway.test(retplasma~vitamine, data = mabase_reti,var.equal=FALSE)
 print(model7)
 ```
-# v : Relation entre la consommation de vitamines et les quantités d’alcool et de rétinol consommées
+## v : Relation entre la consommation de vitamines et les quantités d’alcool et de rétinol consommées
 #Graphiques
 ```{r}
 par(mfrow = c(1, 1))
 ggplot(mabase_reti,aes(x=vitamine,y=cholesterol)) + geom_boxplot(aes(fill = vitamine))  + labs(x="Consommation de vitamines", y= "Taux de cholestérol (mg/jour)")+ scale_x_discrete(labels=c("Oui, souvent","Oui, pas souvent","Non")) + scale_fill_brewer(palette="Dark2",labels = c("Oui, souvent","Oui, pas souvent","Non"),name = "Consommation de vitamines")
 ggplot(mabase_reti,aes(x=vitamine,y=retplasma)) + geom_boxplot(aes(fill = vitamine))  + labs(x="Consommation de vitamines", y= "Taux de rétinol plasmatique (ng/ml)")+ scale_x_discrete(labels=c("Oui, souvent","Oui, pas souvent","Non")) + scale_fill_brewer(palette="Dark2",labels = c("Oui, souvent","Oui, pas souvent","Non"),name = "Consommation de vitamines")
 ```
-# Tests de kruskal-Wallis
+## Tests de kruskal-Wallis
 ```{r}
 kruskal.test(alcool~vitamine, mabase_reti)
 kruskal.test(retplasma~vitamine, mabase_reti)
 ```
-# w : Relation entre la quantité de cholestérol et la prise d’alcool, le taux de rétinol consommé et le taux de rétinol plasmatique
+## w : Relation entre la quantité de cholestérol et la prise d’alcool, le taux de rétinol consommé et le taux de rétinol plasmatique
 ```{r}
 ggplot(mabase_reti,aes(x=mabase_reti$cholesterol, y= alcool, colour = sexe)) + geom_point() + labs (x="Consommation de cholestérol (mg/jour)", y="Consommation d'alcool (verres/jour)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ggplot(mabase_reti,aes(x=mabase_reti$cholesterol, y= retdiet, colour = sexe)) + geom_point() + labs (x="Consommation de cholestérol (mg/jour)", y="Consommation de rétinol (mcg/jour)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ggplot(mabase_reti,aes(x=mabase_reti$cholesterol, y= retplasma, colour = sexe)) + geom_point() + labs (x="Consommation de cholestérol (mg/jour)", y="Concentration de rétinol plasmatique (ng/ml)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ```
-# test dd nullité de la corrélation de Pearson
+## test dd nullité de la corrélation de Pearson
 ```{r}
 cor.test(x=mabase_reti$cholesterol, y= mabase_reti$alcool)
 cor.test(x=mabase_reti$cholesterol, y= mabase_reti$retdiet)
 cor.test(x=mabase_reti$cholesterol, y= mabase_reti$retplasma)
 ```
-# x : Relation entre la quantité de verres d’alcool consommée par jour et retdiet, retdiet
+## x : Relation entre la quantité de verres d’alcool consommée par jour et retdiet, retdiet
 ```{r}
 ggplot(mabase_reti,aes(x=mabase_reti$alcool, y= retdiet, colour = sexe)) + geom_point() + labs (x="Nombre de verres d'alcool par jour", y="Consommation de rétinol  (mcg/jour)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ggplot(mabase_reti,aes(x=mabase_reti$alcool, y= retplasma, colour = sexe)) + geom_point() + labs (x="Nombre de verres d'alcool par jour", y="Concentration en rétinol plasmatique  (ng/ml)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 
 ```
-# test de nullité du r de pearson
+## test de nullité du r de pearson
 ```{r}
 cor.test(x=mabase_reti$alcool, y= mabase_reti$retdiet)
 cor.test(x=mabase_reti$alcool, y= mabase_reti$retplasma,method = "spearman")
 ```
-# y : Retplasma vs retdiet
-# Graphique
+## y : Retplasma vs retdiet
+## Graphique
 ```{r}
 ggplot(mabase_reti,aes(x=mabase_reti$retdiet, y= retplasma, colour = sexe)) + geom_point() + labs (x="Consommation en rétinol alimentaire (mcg/jour)", y="Concentration en rétinol plasmatique  (ng/ml)")+ scale_color_manual(labels = c("Masculin", "Féminin"), values = c("blue","red"))
 ```
-# test de r de Pearson
+## test de r de Pearson
 ```{r}
 cor.test(x=mabase_reti$retdiet, y= mabase_reti$retplasma)
 
 ```
-# 3 : Régression linéaire multiple et test des interactions 
-# Recodons les variables catégorielles à plus de deux facteurs avec leurs noms et la réf: tabac et # vitamines
+## 3 : Régression linéaire multiple et test des interactions 
+## Recodons les variables catégorielles à plus de deux facteurs avec leurs noms et la réf: tabac et ## vitamines
 ```{r,echo=TRUE}
 mabase_reti$tabac <- factor(mabase_reti$tabac,
                             levels = c("1","2","3"),
@@ -409,9 +410,9 @@ mabase_reti$vitamine <- factor(mabase_reti$vitamine,
 mabase_reti$vitamine <- relevel(mabase_reti$vitamine, ref = "Jamais")
 
 ```
-#  Modèle de régression multiple sans interactions testées avec 
-#test de normalité et homoscédasticité des résidus, vif pour la colinéarité 
-```{r,echo=FALSE}
+##  Modèle de régression multiple sans interactions testées avec 
+## test de normalité et homoscédasticité des résidus, vif pour la colinéarité 
+```{r,echo=TRUE}
 model_si <- lm(retplasma ~ age + sexe + alcool + tabac + bmi + vitamine + cholesterol + retdiet, data = mabase_reti)
 
 hist(resid(model_si), col ="blue", xlab = "Résidus du modèle", ylab = "Fréquences", main = "")
@@ -429,33 +430,33 @@ tbl_regression(
 )
 
 ```
-# Testons diverses interactions
-# a : Interaction entre le sexe et l'age
-```{r,echo=FALSE}
+## Testons diverses interactions
+## a : Interaction entre le sexe et l'age
+```{r,echo=TRUE}
 model_i1 <- lm(retplasma ~ age*sexe + alcool + tabac + bmi + vitamine + cholesterol + retdiet, data = mabase_reti)
 print(anova(model_si,model_i1), digits = 3)
 ```
-# b : Interaction age alcool
+## b : Interaction age alcool
 ```{r}
 model_i2 <- lm( retplasma ~ age * alcool + sexe + tabac + bmi + vitamine + cholesterol + retdiet,  data = mabase_reti)
 summary(model_i2)
 anova(model_si, model_i2)
 ```
-# b : Interaction age tabac
+## b : Interaction age tabac
 ```{r}
 model_i3 <- lm( retplasma ~ age * tabac + sexe + alcool + bmi + vitamine + cholesterol + retdiet,
   data = mabase_reti)
 
 anova(model_si, model_i3)
 ```
-# d : Interaction age bmi
+## d : Interaction age bmi
 ```{r}
 model_i4 <- lm( retplasma ~ age * bmi + sexe + alcool + tabac +  vitamine + cholesterol + retdiet,
   data = mabase_reti)
 
 anova(model_si, model_i4)
 ```
-# e: age vs vitamines
+## e: age vs vitamines
 ```{r}
 model_i5 <- lm(retplasma ~ age * vitamine + sexe + alcool + tabac +  bmi + cholesterol + retdiet,
 data = mabase_reti)
@@ -463,26 +464,26 @@ data = mabase_reti)
 anova(model_si, model_i5)
 
 ```
-# f: age vs cholesterol
+## f: age vs cholesterol
 ```{r}
 model_i6 <- lm( retplasma ~ age * cholesterol + sexe + alcool + tabac + bmi + vitamine + retdiet,
 data = mabase_reti)
 
 anova(model_si, model_i6)
 ```
-# g: age vs retdiet
+## g: age vs retdiet
 ```{r}
 model_i7 <- lm(retplasma ~ age * retdiet + sexe + alcool + tabac + bmi + vitamine + cholesterol, data = mabase_reti)
 anova(model_si, model_i7)
 ```
-#h: sexe vs alcool
+## h: sexe vs alcool
 ```{r}
 model_i8 <- lm(retplasma ~ sexe * alcool + age + tabac + bmi + vitamine + cholesterol + retdiet,
 data = mabase_reti)
 
 anova(model_si, model_i8)
 ```
-# i: sexe vs tabac
+## i: sexe vs tabac
 ```{r}
 model_i9 <- lm( retplasma ~ sexe * tabac + age + alcool + bmi + vitamine + cholesterol + retdiet,
   data = mabase_reti)
@@ -490,42 +491,42 @@ model_i9 <- lm( retplasma ~ sexe * tabac + age + alcool + bmi + vitamine + chole
 anova(model_si, model_i9)
 
 ```
-#j: sexe vs bmi
+## j: sexe vs bmi
 ```{r}
 model_i10 <- lm(retplasma ~ sexe * bmi + age + alcool + tabac + vitamine + cholesterol + retdiet,
 data = mabase_reti)
 
 anova(model_si, model_i10)
 ```
-#k: sexe vs vitamines
+## k: sexe vs vitamines
 ```{r}
 model_i11 <- lm( retplasma ~ sexe * vitamine + age + alcool + tabac + bmi + cholesterol + retdiet, data = mabase_reti)
 
 anova(model_si, model_i11)
 
 ```
-#l: sexe vs chol
+## l: sexe vs chol
 ```{r}
 model_i12 <- lm(retplasma ~ sexe * cholesterol + age + alcool + tabac + bmi + vitamine + retdiet,
 data = mabase_reti)
 
 anova(model_si, model_i12)
 ```
-#m: sexe vs retdiet
+## m: sexe vs retdiet
 ```{r}
 model_i13 <- lm(retplasma ~ sexe * retdiet + age + alcool + tabac + bmi + vitamine + cholesterol,
 data = mabase_reti)
 
 anova(model_si, model_i13)
 ```
-# n: alcool vs tabac
+## n: alcool vs tabac
 ```{r}
 model_i14 <- lm(retplasma ~ alcool * tabac + age + sexe + bmi + vitamine + cholesterol + retdiet,
 data = mabase_reti)
 
 anova(model_si, model_i14)
 ```
-#l: alcool vs bmi
+## l: alcool vs bmi
 ```{r}
 model_i15 <- lm(retplasma ~ alcool * bmi + age + sexe + tabac + vitamine + cholesterol + retdiet,
 data = mabase_reti)
@@ -533,14 +534,14 @@ summary(model_i15)
 anova(model_si, model_i15)
 
 ```
-#o: alcool vs vitamines
+## o: alcool vs vitamines
 ```{r}
 model_i16 <- lm(retplasma ~ alcool * vitamine + age + sexe + tabac + bmi + cholesterol + retdiet,
 data = mabase_reti)
 summary(model_i16)
 anova(model_si, model_i16)
 ```
-#p: alcool vs chol
+## p: alcool vs chol
 ```{r}
 model_i17 <- lm( retplasma ~ alcool * cholesterol + age + sexe + tabac + bmi + vitamine + retdiet,
 data = mabase_reti)
@@ -548,28 +549,28 @@ summary(model_i17)
 
 anova(model_si, model_i17)
 ```
-#q: alcool vs retdiet
+## q: alcool vs retdiet
 ```{r}
 model_i18 <- lm(retplasma ~ alcool * retdiet + age + sexe + tabac + bmi + vitamine + cholesterol,
 data = mabase_reti)
 
 anova(model_si, model_i18)
 ```
-#r: tabac vs bmi
+## r: tabac vs bmi
 ```{r}
 model_i19 <- lm(retplasma ~ tabac * bmi + age + sexe + alcool + vitamine + cholesterol + retdiet,
 data = mabase_reti)
 
 anova(model_si, model_i19)
 ```
-#s:tabac vs vitamines
+## s:tabac vs vitamines
 ```{r}
 model_i20 <- lm( retplasma ~ tabac * vitamine + age + sexe + alcool + bmi + cholesterol + retdiet,
 data = mabase_reti)
 
 anova(model_si, model_i20)
 ```
-#t: tabac vs cholestérol
+## t: tabac vs cholestérol
 ```{r}
 model_i21 <- lm(retplasma ~ tabac * cholesterol + age + sexe + alcool + bmi + vitamine + retdiet,
 data = mabase_reti)
@@ -577,14 +578,14 @@ data = mabase_reti)
 anova(model_si, model_i21)
 
 ```
-#u: tabac vs retdiet
+## u: tabac vs retdiet
 ```{r}
 model_i22 <- lm( retplasma ~ tabac * retdiet + age + sexe + alcool + bmi + vitamine + cholesterol,
 data = mabase_reti)
 
 anova(model_si, model_i22)
 ```
-#v: bmi vs vitamines
+## v: bmi vs vitamines
 ```{r}
 
 model_i23 <- lm( retplasma ~ bmi * vitamine + age + sexe + alcool + tabac + cholesterol + retdiet,
@@ -593,21 +594,21 @@ data = mabase_reti)
 anova(model_si, model_i23)
 
 ```
-#w: bmi vs chol
+## w: bmi vs chol
 ```{r}
 model_i24 <- lm(retplasma ~ bmi * cholesterol + age + sexe + alcool + tabac + vitamine + retdiet,
 data = mabase_reti)
 
 anova(model_si, model_i24)
 ```
-#x: bmi vs retdiet
+## x: bmi vs retdiet
 ```{r}
 model_i25 <- lm(retplasma ~ bmi * retdiet + age + sexe + alcool + tabac + vitamine + cholesterol,
 data = mabase_reti)
 
 anova(model_si, model_i25)
 ```
-#y: vitamine vs cholestérol
+## y: vitamine vs cholestérol
 ```{r}
 model_i26 <- lm(retplasma ~ vitamine * cholesterol + age + sexe + alcool + tabac + bmi + retdiet,
 data = mabase_reti)
@@ -615,21 +616,21 @@ data = mabase_reti)
 anova(model_si, model_i26)
 
 ```
-# z: vit vs retdiet
+## z: vit vs retdiet
 ```{r}
 model_i27 <- lm(retplasma ~ vitamine * retdiet + age + sexe + alcool + tabac + bmi + cholesterol,
 data = mabase_reti)
 
 anova(model_si, model_i27)
 ```
-#Z1: chol vs retdiet
+## Z1: chol vs retdiet
 ```{r}
 model_i28 <- lm(retplasma ~ cholesterol * retdiet + age + sexe + alcool + tabac + bmi + vitamine,
   data = mabase_reti)
 
 anova(model_si, model_i28)
 ```
-#Corrigeons les p values avec la FDR 
+## Corrigeons les p values avec la FDR 
 ```{r}
 p_values <- c(
   anova(model_si, model_i1)$`Pr(>F)`[2],
@@ -695,7 +696,7 @@ F_values <- c(
 )
 
 ```
-#Tableau résumé
+## Tableau résumé
 ```{r}
 resultats_BH <- data.frame(Interaction = c(
     "Age × Sexe",
@@ -732,12 +733,12 @@ resultats_BH$Significativite <- ifelse(resultats_BH$p_value_BH < 0.05,"Significa
 resultats_BH
 ```
 
-# 4 : Retinol plasmatique en variable binaire
-```{r,echo=FALSE}
+## 4 : Retinol plasmatique en variable binaire
+```{r,echo=TRUE}
 mabase_reti$retpla.bi <- ifelse(mabase_reti$retplasma > median(mabase_reti$retplasma), 1, 0)
 ```
-# Modèle logistique
-```{r,echo=FALSE}
+## Modèle logistique
+```{r,echo=TRUE}
 model_si_logi <- glm(retpla.bi ~ age + sexe + alcool + tabac + bmi + vitamine + cholesterol + retdiet, data = mabase_reti, family = "binomial")
 hist(resid(model_si_logi))
 vif(model_si_logi)
@@ -752,7 +753,7 @@ tbl_regression(
   pvalue_fun = ~ style_pvalue(.x, digits = 3)
 )
 ```
-# Testons les interactions
+## Testons les interactions
 ```{r}
 m_age_sexe         <- glm(retpla.bi ~ age*sexe + alcool + tabac + bmi + vitamine + cholesterol + retdiet, data = mabase_reti, family = "binomial")
 m_age_alcool       <- glm(retpla.bi ~ age*alcool + sexe + tabac + bmi + vitamine + cholesterol + retdiet, data = mabase_reti, family = "binomial")
